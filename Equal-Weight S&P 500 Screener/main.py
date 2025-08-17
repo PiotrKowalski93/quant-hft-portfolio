@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import requests
+#import requests
 import xlsxwriter
 import math
 import yfinance as yf
@@ -10,13 +10,13 @@ print("Path at terminal when executing this file")
 print(os.getcwd() + "\n")
 
 ## Loading API Key
-from config import IEX_CLOUD_API_TOKEN
+#from config import IEX_CLOUD_API_TOKEN
 
 ## Importing list of stocs
 stocks = pd.read_csv("./Equal-Weight S&P 500 Screener/sp_500_stocks.csv")
-# print(stocks)
-# for stock in stocks['Ticker']:
-#     print(stock)
+#print(stocks)
+#for stock in stocks['Ticker']:
+#    print(stock)
 
 ## Making API Call for all stock
 dataColumns = ['Symbol', 'Stock Price', 'Market Cap', 'Number of shares to Buy']
@@ -29,7 +29,7 @@ for stock in stocks['Ticker'][:5]:
         info = ticker.info
 
         if not info or info.get("currentPrice") is None:
-            raise ValueError("Brak danych dla ticker'a")
+            raise ValueError("Missing ticker data")
 
         lst.append([stock, info.get("currentPrice"), info.get("marketCap"), 'N/A'])
 
