@@ -14,3 +14,5 @@ To identify high-quality momentum, you can build strategy that selects stocks fr
 - 3-month price returns
 - 6-month price returns
 - 1-year price returns
+
+**The HQM Score** will be the arithmetic mean of the 4 momentum percentile scores.

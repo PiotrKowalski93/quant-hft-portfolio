@@ -4,13 +4,14 @@ import math
 import yfinance as yf
 import xlsxwriter
 from scipy import stats
+from statistics import mean
 
 # Equal weight
-def calculate_shares(portfolio_size, dataframe):
+def calculate_shares(portfolio_size, dataframe, column):
     position_size = portfolio_size/len(dataframe.index)
 
     for i in range(0, len(dataframe.index)):
-        dataframe.loc[i, '#Shares to Buy'] = math.floor(position_size/dataframe.loc[i, 'Price'])
+        dataframe.loc[i, column] = math.floor(position_size/dataframe.loc[i, 'Price'])
     #print(dataframe)
 
 # Sample momentum strategy
@@ -65,12 +66,13 @@ hqm_columns = [
     'Three-Months Price Percentile',
     'One-Month Price Return',
     'One-Month Price Percentile',
+    'HQM Score'
 ]
 
 hqm_dataframe = pd.DataFrame(columns=hqm_columns)
 
 lst = []
-for stock in stocks['Ticker'][:10]:
+for stock in stocks['Ticker'][:15]:
     try:
         data_1y = yf.download(stock, period="1y")
         data_6mo = yf.download(stock, period="6mo")
@@ -84,20 +86,21 @@ for stock in stocks['Ticker'][:10]:
 
         last_price = data_1mo['Close'].iloc[-1].item()
 
-        lst.append([stock, last_price, 'N/A', change_1y, 'N/A', change_6mo, 'N/A', change_3mo, 'N/A', change_1mo, 'N/A'])
+        lst.append([stock, last_price, 'N/A', change_1y, 'N/A', change_6mo, 'N/A', change_3mo, 'N/A', change_1mo, 'N/A', 'N/A'])
     except Exception as e:
         print(f"{e}")
 
 hqm_dataframe = pd.DataFrame(lst, columns=hqm_columns)
 
-# -- Calculating actual percentiles
-for row in hqm_dataframe.index:
-    time_periods = [
+time_periods = [
         'One-Year',
         'Six-Months',
         'Three-Months',
         'One-Month'
     ]
+
+# --- Calculating actual percentiles ---
+for row in hqm_dataframe.index:
     for time_period in time_periods:
         change_column = f'{time_period} Price Return'
         percentile_column = f'{time_period} Price Percentile'
@@ -105,5 +108,22 @@ for row in hqm_dataframe.index:
         hqm_dataframe.loc[row, percentile_column] = stats.percentileofscore(hqm_dataframe[change_column], 
                                                                                         hqm_dataframe.loc[row, change_column])
 
+# --- Calculating HQM Score --- 
+for row in hqm_dataframe.index:
+    momentum_percentiles = []
+    for time_period in time_periods:
+        percentile_column = f'{time_period} Price Percentile'
+        momentum_percentiles.append(hqm_dataframe.loc[row, percentile_column])
+    hqm_dataframe.loc[row, 'HQM Score'] = mean(momentum_percentiles)
+
+hqm_dataframe.sort_values('HQM Score', ascending=False, inplace=True)
+hqm_dataframe = hqm_dataframe[:5]
+hqm_dataframe.reset_index(inplace=True)
+
+# --- Calculate Number of shares to buy --- 
+calculate_shares(1000000, hqm_dataframe, 'Number of Shares to Buy')
 
 print(hqm_dataframe)
+
+# --- Save to Excel ---
+# TODO: Save hqm_dataframe to excel file
