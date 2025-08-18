@@ -118,12 +118,71 @@ for row in hqm_dataframe.index:
 
 hqm_dataframe.sort_values('HQM Score', ascending=False, inplace=True)
 hqm_dataframe = hqm_dataframe[:5]
-hqm_dataframe.reset_index(inplace=True)
+hqm_dataframe.reset_index(drop=True, inplace=True)
 
 # --- Calculate Number of shares to buy --- 
 calculate_shares(1000000, hqm_dataframe, 'Number of Shares to Buy')
-
 print(hqm_dataframe)
 
-# --- Save to Excel ---
-# TODO: Save hqm_dataframe to excel file
+# --- Save in excel for Quants ---
+writer = pd.ExcelWriter('strategy.xlsx', engine = 'xlsxwriter')
+hqm_dataframe.to_excel(writer, 'Recommended trades', index = False)
+
+### Formatting for excel file
+backgroud_color = '#0a0a23'
+font_color = '#ffffff'
+
+string_format = writer.book.add_format(
+    {
+        'font_color': font_color,
+        'bg_color': backgroud_color,
+        'border': 1
+    }
+)
+
+dollar_format = writer.book.add_format(
+    {
+        'num_format': '$0.0000',
+        'font_color': font_color,
+        'bg_color': backgroud_color,
+        'border': 1
+    }
+)
+
+int_format = writer.book.add_format(
+    {
+        'num_format': '0',
+        'font_color': font_color,
+        'bg_color': backgroud_color,
+        'border': 1
+    }
+)
+
+float_format = writer.book.add_format(
+    {
+        'num_format': '0.0000',
+        'font_color': font_color,
+        'bg_color': backgroud_color,
+        'border': 1
+    }
+)
+
+column_formats = {
+    'A' : ['Ticker', string_format],
+    'B' : ['Price', dollar_format],
+    'C' : ['Number of Shares to Buy', int_format],
+    'D' : ['One-Year Price Return', int_format],
+    'E' : ['One-Year Price Percentile', float_format],
+    'F' : ['Six-Months Price Return', float_format],
+    'G' : ['Six-Months Price Percentile', float_format],
+    'H' : ['Three-Months Price Return', float_format],
+    'I' : ['Three-Months Price Percentile', float_format],
+    'J' : ['One-Month Price Return', float_format],
+    'K' : ['One-Month Price Percentile', float_format],
+    'L' : ['HQM Score', float_format]
+}
+
+for column in column_formats.keys():
+    writer.sheets['Recommended trades'].set_column(f'{column}:{column}', 18, column_formats[column][1])
+
+writer.close()
