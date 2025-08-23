@@ -2,7 +2,7 @@
 
 For this project, we're going to build an investing strategy that selects the 50 stocks with the highest price momentum. From there, we will calculate recommended trades for an equal-weight portfolio of these 50 stocks.
 
-Real-world quantitative investment firms differentiate between "high quality" and "low quality" momentum stocks:
+Real-world quantitative investment firms differentiate between "high quality" and "low quality" momentum stocks.
 
 High-quality momentum stocks show "slow and steady" outperformance over long periods of time
 Low-quality momentum stocks might not show any momentum for a long time, and then surge upwards.

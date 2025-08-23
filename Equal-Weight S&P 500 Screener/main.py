@@ -20,7 +20,6 @@ stocks = pd.read_csv("./Equal-Weight S&P 500 Screener/sp_500_stocks.csv")
 
 ## Making API Call for all stock
 dataColumns = ['Symbol', 'Stock Price', 'Market Cap', 'Number of shares to Buy']
-final_dataframe = pd.DataFrame(columns = dataColumns)
 
 lst = []
 for stock in stocks['Ticker'][:5]:
