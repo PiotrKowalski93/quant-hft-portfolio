@@ -31,3 +31,69 @@ is an investment strategy where you buy stocks (or other assets) that appear und
 - Dividend yield → high, sustainable dividends.
 - Debt-to-equity ratio → lower debt preferred.
 - Free cash flow → positive and stable.
+
+# 📘 Valuation Ratios – Quick Reference
+
+## 1. **Price-to-Earnings (P/E) Ratio**
+- **Formula**:  
+  \[
+  P/E = \frac{\text{Price per Share}}{\text{Earnings per Share (EPS)}}
+  \]  
+- **Meaning**: Shows how much investors are willing to pay for each dollar of earnings.  
+- **Interpretation**:  
+  - **High P/E** → investors expect strong future growth.  
+  - **Low P/E** → possibly undervalued or company facing difficulties.  
+- **Types**:  
+  - **Trailing P/E** → based on last 12 months’ earnings.  
+  - **Forward P/E** → based on forecasted earnings.  
+
+## 2. **Price-to-Book (P/B) Ratio**
+- **Formula**:  
+  \[
+  P/B = \frac{\text{Market Capitalization}}{\text{Book Value of Equity}}
+  \]  
+  or  
+  \[
+  P/B = \frac{\text{Price per Share}}{\text{Book Value per Share}}
+  \]  
+- **Meaning**: Compares market value to net asset value on the balance sheet.  
+- **Interpretation**:  
+  - **P/B < 1** → market values company below its accounting book value (possible undervaluation).  
+  - **P/B > 1** → investors pay a premium for expected growth, brand value, or profitability.  
+
+## 3. **Price-to-Sales (P/S) Ratio**
+- **Formula**:  
+  \[
+  P/S = \frac{\text{Market Capitalization}}{\text{Total Revenue}}
+  \]  
+  or  
+  \[
+  P/S = \frac{\text{Price per Share}}{\text{Sales per Share}}
+  \]  
+- **Meaning**: Shows how much investors pay for each dollar of sales.  
+- **Interpretation**:  
+  - **Low P/S** → may indicate undervaluation (if company has healthy margins).  
+  - **High P/S** → market expects strong growth or high profit margins.  
+
+## 4. **EV/EBITDA Ratio**
+- **Formula**:  
+  \[
+  EV/EBITDA = \frac{\text{Enterprise Value (EV)}}{\text{Earnings Before Interest, Taxes, Depreciation, and Amortization}}
+  \]  
+- **Meaning**: Measures how expensive a company is relative to its operating cash flow.  
+- **Why EV?** → EV accounts for debt and cash, making it more accurate than market cap alone.  
+- **Interpretation**:  
+  - **Low EV/EBITDA** → potentially undervalued (cheaper relative to earnings).  
+  - **High EV/EBITDA** → investors pricing in strong growth or company is overvalued.  
+- **Common Use**: Comparing companies across industries, especially with different capital structures.  
+
+## 5. **EV/Gross Profit (EV/GP) Ratio**
+- **Formula**:  
+  \[
+  EV/GP = \frac{\text{Enterprise Value (EV)}}{\text{Gross Profit}}
+  \]  
+- **Meaning**: Compares company valuation to its gross profit (revenues – cost of goods sold).  
+- **Interpretation**:  
+  - **Low EV/GP** → company generates a lot of gross profit relative to its valuation.  
+  - **High EV/GP** → market pricing in strong future growth or brand value.  
+- **Why use it?** Useful when EBITDA is negative (e.g. early-stage or high-growth companies). 
