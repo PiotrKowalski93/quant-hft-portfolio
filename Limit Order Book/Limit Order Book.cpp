@@ -7,11 +7,6 @@ using namespace std;
 
 int main()
 {
-	return 0;
-}
-
-
-void unit_tests_add_order() {
 	OrderBook order_book;
 
 	order_book.add_order(1, Side::Buy, 100, 5, 1);
@@ -30,4 +25,23 @@ void unit_tests_add_order() {
 	cout << "Asks: " << endl;
 	order_book.print_asks();
 	cout << endl;
-};
+
+	// Order Details Check
+	cout << "OrderId: 4" << endl;
+	order_book.print_orderDetails(4);
+	cout << endl;
+
+	cout << "OrderId: 7" << endl;
+	order_book.print_orderDetails(7);
+	cout << endl;
+	// ----------
+
+	// Cancel Order Check
+	cout << "Cancel Order: 4" << endl;
+	order_book.cancel_order(4);
+	order_book.print_bids();
+	cout << endl;
+	// ---------
+
+	return 0;
+}

@@ -5,9 +5,11 @@
 
 #include <iostream>
 #include <deque>
+#include <list>
 #include <map>
 #include <chrono>
-
+#include <unordered_map>
+#include <variant>
 
 using namespace std;
 
@@ -33,18 +35,36 @@ struct Order {
 struct PriceLevel {
 	Price	price{};
 	Qty		total_Qty{};		// aggregated quantity at this price
-	deque<Order> queue;			// FIFO queue of active orders
+	list<Order> queue;			// FIFO queue of active orders
 };
 
 // --- Book definition ---
 using BidLevels = map<Price, PriceLevel, greater<Price>>;
 using AskLevels = map<Price, PriceLevel, less<Price>>;
 
+// -- Set of locators
+struct BidLocator { 
+	BidLevels::iterator level_it; 
+	list<Order>::iterator order_it;
+};
+
+struct AskLocator { 
+	AskLevels::iterator level_it; 
+	list<Order>::iterator order_it;
+};
+
+struct OrderLocator { 
+	Side side; 
+	variant<BidLocator, AskLocator> locator; 
+};
+
 // -- Class for Order Book
 class OrderBook {
 
 	BidLevels bids;
 	AskLevels asks;
+
+	unordered_map<OrderId, OrderLocator> orderId_index;
 
 	public:
 		void add_order(OrderId orderId, Side side, Price price, Qty qty, Ts ts) {
@@ -53,7 +73,6 @@ class OrderBook {
 				cout << "Price must be bigger than 0.";
 				return;
 			}
-
 			if (qty <= 0) {
 				cout << "Qty must be bigger than 0.";
 				return;
@@ -61,41 +80,96 @@ class OrderBook {
 
 			// --- Create order
 			// TODO: If orderId exist, return
-			Order new_order { orderId, side, price, qty, ts};
-		
+			Order new_order { orderId, side, price, qty, ts };
+
 			switch (side) {
 				case Side::Buy:
-					// --- Create price level or find existing
 					if (bids.contains(price))
 					{
 						bids[price].total_Qty += qty;
 						bids[price].queue.push_back(new_order);
+
+						auto bid_it = bids.find(price);
+						auto itQueue = prev(bids[price].queue.end());
+
+						BidLocator newBidLoc { bid_it, itQueue };
+						OrderLocator newOrderLoc { side, newBidLoc };
+						orderId_index[orderId] = newOrderLoc;
 					}
 					else {
 						PriceLevel price_level{	price, qty, {} };
 						price_level.queue.push_back(new_order);
 						bids[price] = price_level;
+
+						auto it = bids.find(price);
+						auto itQueue = prev(bids[price].queue.end());
+
+						BidLocator newBidLoc { it, itQueue };
+						OrderLocator newOrderLoc { side, newBidLoc };
+						orderId_index[orderId] = newOrderLoc;
 					}
 				break;
 				case Side::Sell:
-					// --- Create price level or find existing
 					if (asks.contains(price))
 					{
 						asks[price].total_Qty += qty;
 						asks[price].queue.push_back(new_order);
+
+						auto ask_it = asks.find(price);
+						auto itQueue = prev(asks[price].queue.end());
+
+						AskLocator newAskLoc{ ask_it, itQueue };
+						OrderLocator newOrderLoc{ side, newAskLoc };
+						orderId_index[orderId] = newOrderLoc;
 					}
 					else {
 						PriceLevel price_level{	price, qty, {} };
 						price_level.queue.push_back(new_order);
 						asks[price] = price_level;
+
+						auto it = asks.end();
+						auto itQueue = prev(price_level.queue.end());
+
+						AskLocator newAskLoc{ it, itQueue };
+						OrderLocator newOrderLoc{ side, newAskLoc };
+						orderId_index[orderId] = newOrderLoc;
 					}
 				break;
 			}
 
 		};
 
-	void cancel_order() {
-		// TODO
+	void cancel_order(OrderId orderId) {
+
+		// Order does not exist
+		if (orderId_index.count(orderId) == 0)
+		{
+			cout << "Order does not exist" << endl;
+			return;
+		};
+
+		auto& loc = orderId_index[orderId].locator;
+
+		std::visit([&](auto&& locator) {
+			using T = std::decay_t<decltype(locator)>;
+
+			auto& level = locator.level_it->second;
+			auto& order = *(locator.order_it);
+
+			level.total_Qty -= order.qty;
+			level.queue.erase(locator.order_it);
+
+			if (level.queue.empty()) {
+				if (std::is_same_v<T, BidLocator>) {
+					bids.erase(locator.level_it);
+				}
+				else if (std::is_same_v<T, AskLocator>) {
+					asks.erase(locator.level_it);
+				}
+			}
+		}, loc);
+
+		orderId_index.erase(orderId);
 	};
 
 	void reduce_order() {
@@ -130,6 +204,15 @@ class OrderBook {
 		{
 			cout << std::format("{0}:{1}:{2}", ask.first, ask.second.total_Qty, ask.second.queue.size()) << endl;
 		}
+	}
+
+	void print_orderDetails(OrderId orderId) {
+		auto& loc = orderId_index[orderId].locator;
+		// Wierd magic down below
+		std::visit([&](auto&& locator) {
+			Order order = *locator.order_it;
+			cout << format("{0} {1} {2} {3}", order.id, order.price, order.qty, order.ts);
+		}, loc);
 	}
 };
 
