@@ -172,8 +172,29 @@ class OrderBook {
 		orderId_index.erase(orderId);
 	};
 
-	void reduce_order() {
-		// TODO
+	void reduce_order(OrderId order_id, Qty reduce_by) {
+		auto it = orderId_index.find(order_id);
+		if (it == orderId_index.end()) {
+			cout << "Order does not exist" << endl;
+			return;
+		}
+
+		auto& loc = orderId_index[order_id].locator;
+
+		std::visit([&](auto && locator) {
+
+			auto& level = locator.level_it->second;
+			auto& order = *(locator.order_it);
+
+			if (reduce_by >= order.qty) {
+				// Refactor to not do the second lookup in hashmap
+				cancel_order(order_id);
+			}
+			else {
+				level.total_Qty -= reduce_by;
+				order.qty -= reduce_by;
+			}
+		}, loc);
 	};
 
 	void reprice_order() {
