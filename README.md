@@ -33,3 +33,8 @@ c) Price-to-free-cash-flow
 
 Each of the individual multiples used by value investors has its pros and cons.
 One way to minimize the impact of any specific multiple is by using a **composite**.
+
+### Trading system architecture design
+
+![Alt text](image.png)
+
