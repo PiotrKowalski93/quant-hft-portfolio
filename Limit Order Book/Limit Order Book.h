@@ -201,12 +201,14 @@ class OrderBook {
 		// TODO
 	};
 
-	void best_bid() {
-		// TODO
+	PriceLevel* best_bid() {
+		if (bids.empty()) return nullptr;
+		return &bids.begin()->second;
 	};
 
-	void best_ask() {
-		// TODO
+	PriceLevel* best_ask() {
+		if (asks.empty()) return nullptr;
+		return &asks.begin()->second;
 	};
 
 	void top_levels() {
