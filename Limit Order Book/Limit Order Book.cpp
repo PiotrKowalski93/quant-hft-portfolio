@@ -90,12 +90,28 @@ void Test_CancelOrder() {
 	// ---------
 }
 
+void Test_TopLevels() {
+	OrderBook ob;
+
+	ob.add_order(1, Side::Buy, 100, 10, 1);
+	ob.add_order(2, Side::Buy, 101, 20, 2);
+	ob.add_order(2, Side::Buy, 102, 20, 3);
+	ob.add_order(3, Side::Sell, 105, 5, 4);
+	ob.add_order(4, Side::Sell, 106, 15, 5);
+	ob.add_order(4, Side::Sell, 107, 15, 6);
+
+	cout << "\n=== Top 2 levels ===" << endl;
+	ob.top_asks_levels(2);
+	ob.top_bids_levels(2);
+}
+
 int main()
 {
 	Test_AddAsk_AddBid();
 	Test_Get_OrderDetail();
 	Test_CancelOrder();
 	Test_BestBid_BestAsk();
+	Test_TopLevels();
 
 	return 0;
 }

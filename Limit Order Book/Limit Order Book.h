@@ -211,19 +211,37 @@ class OrderBook {
 		return &asks.begin()->second;
 	};
 
-	void top_levels() {
-		// TODO
+	void top_bids_levels(int n) {
+		cout << "BIDS: " << endl;
+		int i = 0;
+		for (auto& bid : bids) {
+
+			cout << std::format("{0}:{1}:{2}", bid.first, bid.second.total_Qty, bid.second.queue.size()) << endl;
+
+			if (++i >= n) break;
+		}
+	};
+
+	void top_asks_levels(int n) {
+		cout << "ASKS: " << endl;
+		int i = 0;
+		for (auto& ask : asks) {
+
+			cout << std::format("{0}:{1}:{2}", ask.first, ask.second.total_Qty, ask.second.queue.size()) << endl;
+
+			if (++i >= n) break;
+		}
 	};
 
 	void print_bids() {
-		for (auto bid : bids)
+		for (auto& bid : bids)
 		{
 			cout << std::format("{0}:{1}:{2}", bid.first, bid.second.total_Qty, bid.second.queue.size()) << endl;
 		}
 	};
 
 	void print_asks() {
-		for (auto ask : asks)
+		for (auto& ask : asks)
 		{
 			cout << std::format("{0}:{1}:{2}", ask.first, ask.second.total_Qty, ask.second.queue.size()) << endl;
 		}
