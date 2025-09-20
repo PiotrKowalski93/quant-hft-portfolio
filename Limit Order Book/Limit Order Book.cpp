@@ -71,6 +71,25 @@ void Test_Get_OrderDetail() {
 	cout << endl;
 }
 
+void Test_Reduce_Order() {
+	OrderBook order_book;
+
+	order_book.add_order(1, Side::Buy, 100, 5, 1);
+	order_book.add_order(2, Side::Buy, 105, 15, 2);
+	order_book.add_order(3, Side::Buy, 100, 5, 3);
+	order_book.add_order(4, Side::Buy, 100, 5, 4);
+
+	cout << "Bids: " << endl;
+	order_book.print_bids();
+	cout << endl;
+
+	order_book.reduce_order(2, 5);
+
+	cout << "Bids after reduce: " << endl;
+	order_book.print_bids();
+	cout << endl;
+}
+
 void Test_CancelOrder() {
 	OrderBook order_book;
 
@@ -90,6 +109,21 @@ void Test_CancelOrder() {
 	// ---------
 }
 
+void Test_RepriceOrder() {
+	OrderBook book;
+
+	book.add_order(1, Side::Buy, 100, 10, 1);
+	book.add_order(2, Side::Buy, 101, 5, 2);
+
+	cout << "=== BEFORE ===" << endl;
+	book.print_bids();
+
+	book.reprice_order(1, 102);
+
+	cout << "=== AFTER repricing order 1 to 102 ===" << endl;
+	book.print_bids();
+}
+
 void Test_TopLevels() {
 	OrderBook ob;
 
@@ -107,11 +141,13 @@ void Test_TopLevels() {
 
 int main()
 {
-	Test_AddAsk_AddBid();
-	Test_Get_OrderDetail();
-	Test_CancelOrder();
-	Test_BestBid_BestAsk();
-	Test_TopLevels();
+	//Test_AddAsk_AddBid();
+	//Test_Get_OrderDetail();
+	//Test_CancelOrder();
+	//Test_BestBid_BestAsk();
+	//Test_TopLevels();
+	Test_RepriceOrder();
+	//Test_Reduce_Order();
 
 	return 0;
 }
