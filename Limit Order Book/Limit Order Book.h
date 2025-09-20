@@ -78,7 +78,6 @@ class OrderBook {
 				return;
 			}
 
-			// --- Create order
 			// TODO: If orderId exist, return
 			Order new_order { orderId, side, price, qty, ts };
 
@@ -141,12 +140,7 @@ class OrderBook {
 
 	void cancel_order(OrderId orderId) {
 
-		// Order does not exist
-		if (orderId_index.count(orderId) == 0)
-		{
-			cout << "Order does not exist" << endl;
-			return;
-		};
+		if (orderId_index.count(orderId) == 0) return;
 
 		auto& loc = orderId_index[orderId].locator;
 
@@ -181,13 +175,13 @@ class OrderBook {
 
 		auto& loc = orderId_index[order_id].locator;
 
-		std::visit([&](auto && locator) {
+		std::visit([&](auto&& locator) {
 
 			auto& level = locator.level_it->second;
 			auto& order = *(locator.order_it);
 
 			if (reduce_by >= order.qty) {
-				// Refactor to not do the second lookup in hashmap
+				// TODO: Refactor to not do the second lookup in hashmap
 				cancel_order(order_id);
 			}
 			else {
@@ -197,8 +191,24 @@ class OrderBook {
 		}, loc);
 	};
 
-	void reprice_order() {
-		// TODO
+	void reprice_bid_order(OrderId orderId, Price newPrice) {
+		if (newPrice <= 0) return;
+		
+		auto& orderLocator = orderId_index[orderId].locator;
+		std::visit([&](auto&& locator) {
+			auto& order = *(locator.order_it);
+
+			Order updated_order = order;
+
+			if (updated_order.price == newPrice) return;
+
+			// Cancel old order
+			cancel_order(orderId);
+
+			// Add new order
+			add_order(orderId, updated_order.side, newPrice, updated_order.qty, updated_order.ts);
+
+		}, orderLocator);
 	};
 
 	PriceLevel* best_bid() {
@@ -215,9 +225,7 @@ class OrderBook {
 		cout << "BIDS: " << endl;
 		int i = 0;
 		for (auto& bid : bids) {
-
 			cout << std::format("{0}:{1}:{2}", bid.first, bid.second.total_Qty, bid.second.queue.size()) << endl;
-
 			if (++i >= n) break;
 		}
 	};
@@ -226,23 +234,19 @@ class OrderBook {
 		cout << "ASKS: " << endl;
 		int i = 0;
 		for (auto& ask : asks) {
-
 			cout << std::format("{0}:{1}:{2}", ask.first, ask.second.total_Qty, ask.second.queue.size()) << endl;
-
 			if (++i >= n) break;
 		}
 	};
 
 	void print_bids() {
-		for (auto& bid : bids)
-		{
+		for (auto& bid : bids) {
 			cout << std::format("{0}:{1}:{2}", bid.first, bid.second.total_Qty, bid.second.queue.size()) << endl;
 		}
 	};
 
 	void print_asks() {
-		for (auto& ask : asks)
-		{
+		for (auto& ask : asks) {
 			cout << std::format("{0}:{1}:{2}", ask.first, ask.second.total_Qty, ask.second.queue.size()) << endl;
 		}
 	}
