@@ -1,8 +1,4 @@
-﻿// Limit Order Book.h : Include file for standard system include files,
-// or project specific include files.
-
 #pragma once
-
 #include <iostream>
 #include <deque>
 #include <list>
@@ -61,12 +57,12 @@ struct OrderLocator {
 // -- Class for Order Book
 class OrderBook {
 
+public:
 	BidLevels bids;
 	AskLevels asks;
 
 	unordered_map<OrderId, OrderLocator> orderId_index;
 
-public:
 	void add_order(OrderId orderId, Side side, Price price, Qty qty, Ts ts) {
 
 		if (price <= 0) {
@@ -259,7 +255,7 @@ public:
 				orderId_index[updated_order.id].locator = AskLocator{ new_level_it, new_order_it };
 			};
 
-		}, orderLocator);
+			}, orderLocator);
 	};
 
 	PriceLevel* best_bid() {

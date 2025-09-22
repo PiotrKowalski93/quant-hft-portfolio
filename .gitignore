@@ -220,3 +220,5 @@ CMakeUserPresets.json
 
 #Visual Studio
 .vs
+x64
+packages
