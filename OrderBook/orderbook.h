@@ -78,58 +78,58 @@ public:
 		Order new_order{ orderId, side, price, qty, ts };
 
 		switch (side) {
-		case Side::Buy:
-			if (bids.contains(price))
-			{
-				bids[price].total_Qty += qty;
-				bids[price].queue.push_back(new_order);
+			case Side::Buy:
+				if (bids.contains(price))
+				{
+					bids[price].total_Qty += qty;
+					bids[price].queue.push_back(new_order);
 
-				auto bid_it = bids.find(price);
-				auto itQueue = prev(bids[price].queue.end());
+					auto bid_level_it = bids.find(price);
+					auto bid_order_it = prev(bids[price].queue.end());
 
-				BidLocator newBidLoc{ bid_it, itQueue };
-				OrderLocator newOrderLoc{ side, newBidLoc };
-				orderId_index[orderId] = newOrderLoc;
-			}
-			else {
-				PriceLevel price_level{ price, qty, {} };
-				price_level.queue.push_back(new_order);
-				bids[price] = price_level;
+					BidLocator newBidLoc{ bid_level_it, bid_order_it };
+					OrderLocator newOrderLoc{ side, newBidLoc };
+					orderId_index[orderId] = newOrderLoc;
+				}
+				else {
+					PriceLevel price_level{ price, qty, {} };
+					price_level.queue.push_back(new_order);
+					bids[price] = price_level;
 
-				auto it = bids.find(price);
-				auto itQueue = prev(bids[price].queue.end());
+					auto bid_level_it = bids.find(price);
+					auto bid_order_it = prev(bids[price].queue.end());
 
-				BidLocator newBidLoc{ it, itQueue };
-				OrderLocator newOrderLoc{ side, newBidLoc };
-				orderId_index[orderId] = newOrderLoc;
-			}
-			break;
-		case Side::Sell:
-			if (asks.contains(price))
-			{
-				asks[price].total_Qty += qty;
-				asks[price].queue.push_back(new_order);
+					BidLocator newBidLoc{ bid_level_it, bid_order_it };
+					OrderLocator newOrderLoc{ side, newBidLoc };
+					orderId_index[orderId] = newOrderLoc;
+				}
+				break;
+			case Side::Sell:
+				if (asks.contains(price))
+				{
+					asks[price].total_Qty += qty;
+					asks[price].queue.push_back(new_order);
 
-				auto ask_it = asks.find(price);
-				auto itQueue = prev(asks[price].queue.end());
+					auto ask_level_it = asks.find(price);
+					auto ask_order_it = prev(asks[price].queue.end());
 
-				AskLocator newAskLoc{ ask_it, itQueue };
-				OrderLocator newOrderLoc{ side, newAskLoc };
-				orderId_index[orderId] = newOrderLoc;
-			}
-			else {
-				PriceLevel price_level{ price, qty, {} };
-				price_level.queue.push_back(new_order);
-				asks[price] = price_level;
+					AskLocator newAskLoc{ ask_level_it, ask_order_it };
+					OrderLocator newOrderLoc{ side, newAskLoc };
+					orderId_index[orderId] = newOrderLoc;
+				}
+				else {
+					PriceLevel price_level{ price, qty, {} };
+					price_level.queue.push_back(new_order);
+					asks[price] = price_level;
 
-				auto it = asks.end();
-				auto itQueue = prev(price_level.queue.end());
+					auto ask_level_it = asks.find(price);
+					auto ask_order_it = prev(asks[price].queue.end());
 
-				AskLocator newAskLoc{ it, itQueue };
-				OrderLocator newOrderLoc{ side, newAskLoc };
-				orderId_index[orderId] = newOrderLoc;
-			}
-			break;
+					AskLocator newAskLoc{ ask_level_it, ask_order_it };
+					OrderLocator newOrderLoc{ side, newAskLoc };
+					orderId_index[orderId] = newOrderLoc;
+				}
+				break;
 		}
 
 	};
@@ -257,6 +257,32 @@ public:
 
 			}, orderLocator);
 	};
+
+	// Methods for tests
+	Order* GetBidById(OrderId orderId) {
+		for (auto& pair : bids) {
+			for (auto& order : pair.second.queue) {
+				if (order.id == orderId) {
+					return &order;
+				}
+			}
+		}
+
+		return nullptr;
+	}
+
+	Order* GetAskById(OrderId orderId) {
+		for (auto& pair : asks) {
+			for (auto& order : pair.second.queue) {
+				if (order.id == orderId) {
+					return &order;
+				}
+			}
+		}
+
+		return nullptr;
+	}
+	// --------------
 
 	PriceLevel* best_bid() {
 		if (bids.empty()) return nullptr;
