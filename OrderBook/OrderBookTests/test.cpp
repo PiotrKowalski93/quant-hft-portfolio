@@ -167,3 +167,39 @@ TEST(RepriceOrder, RepriceAskWithExistingPriceLevel) {
 	EXPECT_EQ(3, order_book.asks[102].queue.size());
 	EXPECT_EQ(30, order_book.asks[102].total_Qty);
 }
+
+TEST(BestOrder, GetBestBid) {
+	OrderBook order_book;
+
+	order_book.add_order(1, Side::Buy, 100, 5, 1);
+	order_book.add_order(2, Side::Buy, 105, 15, 2);
+	order_book.add_order(3, Side::Buy, 100, 5, 3);
+	order_book.add_order(4, Side::Buy, 100, 5, 4);
+	order_book.add_order(5, Side::Sell, 99, 5, 1);
+	order_book.add_order(6, Side::Sell, 98, 15, 2);
+	order_book.add_order(7, Side::Sell, 98, 5, 3);
+
+	auto price_level = order_book.best_bid();
+
+	EXPECT_EQ(105, price_level->price);
+	EXPECT_EQ(1, price_level->queue.size());
+	EXPECT_EQ(15, price_level->total_Qty);
+}
+
+TEST(BestOrder, GetBestAsk) {
+	OrderBook order_book;
+
+	order_book.add_order(1, Side::Buy, 100, 5, 1);
+	order_book.add_order(2, Side::Buy, 105, 15, 2);
+	order_book.add_order(3, Side::Buy, 100, 5, 3);
+	order_book.add_order(4, Side::Buy, 100, 5, 4);
+	order_book.add_order(5, Side::Sell, 99, 5, 1);
+	order_book.add_order(6, Side::Sell, 98, 15, 2);
+	order_book.add_order(7, Side::Sell, 98, 5, 3);
+
+	auto price_level = order_book.best_ask();
+
+	EXPECT_EQ(98, price_level->price);
+	EXPECT_EQ(2, price_level->queue.size());
+	EXPECT_EQ(20, price_level->total_Qty);
+}
