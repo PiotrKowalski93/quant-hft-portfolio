@@ -12,7 +12,7 @@ struct Trade {
 
 class MatchingEngine {
 public: 
-	vector<Trade> process_marked_order_sell(Qty qty, Ts timestamp) {
+	vector<Trade> process_sell_marked_order(Qty qty, Ts timestamp) {
 		vector<Trade> trades;
 		
 		// To prevent memory alloc resize
@@ -51,7 +51,7 @@ public:
 		return trades;
 	}
 
-	vector<Trade> process_marked_order_buy(Qty qty, Ts timestamp) {
+	vector<Trade> process_buy_marked_order(Qty qty, Ts timestamp) {
 		vector<Trade> trades;
 		trades.reserve(10);
 
@@ -82,6 +82,15 @@ public:
 
 		return trades;
 	}
+
+/// <summary>
+/// Order Book API
+/// </summary>
+
+// TODO: Implement Order Book API
+
+
+///  --------------------------
 
 private:
 	OrderBook order_book;
