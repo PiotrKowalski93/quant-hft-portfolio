@@ -83,14 +83,25 @@ public:
 		return trades;
 	}
 
-/// <summary>
-/// Order Book API
-/// </summary>
+	/// <summary>
+	/// Order Book API
+	/// </summary>
+	void add_order(OrderId orderId, Side side, Price price, Qty qty, Ts ts) {
+		order_book.add_order(orderId, side, price, qty, ts);
+	}
 
-// TODO: Implement Order Book API
+	void cancel_order(OrderId orderId) {
+		order_book.cancel_order(orderId);
+	}
 
+	void reduce_order(OrderId orderId, Qty reduce_by) {
+		order_book.reduce_order(orderId, reduce_by);
+	}
 
-///  --------------------------
+	void reprice_order(OrderId orderId, Price newPrice) {
+		order_book.reprice_order(orderId, newPrice);
+	}
+	///  --------------------------
 
 private:
 	OrderBook order_book;
