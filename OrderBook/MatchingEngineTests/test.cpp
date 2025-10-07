@@ -1,6 +1,12 @@
-#include "pch.h"
+//#include "pch.h"
+#include "gtest/gtest.h"
+#include "../MatchingEngine/engine.h"
 
-TEST(TestCaseName, TestName) {
-  EXPECT_EQ(1, 1);
-  EXPECT_TRUE(true);
+TEST(ProcessSellMarketOrder, EmptyOrderBook) {
+	MatchingEngine engine;
+	vector<Trade> result;
+
+	result = engine.process_sell_marked_order(10, 1);
+
+	EXPECT_EQ(0, result.size());
 }
