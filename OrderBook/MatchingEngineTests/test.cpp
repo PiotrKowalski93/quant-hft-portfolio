@@ -10,3 +10,12 @@ TEST(ProcessSellMarketOrder, EmptyOrderBook) {
 
 	EXPECT_EQ(0, result.size());
 }
+
+TEST(ProcessBuyMarketOrder, EmptyOrderBook) {
+	MatchingEngine engine;
+	vector<Trade> result;
+
+	result = engine.process_buy_marked_order(10, 1);
+
+	EXPECT_EQ(0, result.size());
+}
