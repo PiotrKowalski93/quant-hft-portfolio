@@ -294,6 +294,23 @@ public:
 		return &asks.begin()->second;
 	};
 
+	Qty get_asks_total_qty() {
+		Qty sum = {}; // zero init = 0
+
+		for (auto& [price, price_level] : asks) {
+			sum += price_level.total_Qty;
+		}
+		return sum;
+	}
+
+	Qty get_bids_total_qty() {
+		Qty sum = {};
+		for (auto& [price, price_level] : bids) {
+			sum += price_level.total_Qty;
+		}
+		return sum;
+	}
+
 	void top_bids_levels(int n) {
 		cout << "BIDS: " << endl;
 		int i = 0;

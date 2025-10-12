@@ -26,9 +26,9 @@ public:
 		// To prevent memory alloc resize
 		trades.reserve(10);
 
-		while (qty > 0 && !order_book.asks.empty())
+		while (qty > 0 && !order_book.bids.empty())
 		{
-			auto best_ask_it = order_book.asks.begin();
+			auto best_ask_it = order_book.bids.begin();
 			auto& level_it = best_ask_it->second;
 
 			while (qty > 0 && !level_it.queue.empty())
@@ -46,14 +46,14 @@ public:
 				});
 
 				order.qty -= trade_qty;
+				level_it.total_Qty -= trade_qty;
 				qty -= trade_qty;
 
 				// Remove order if fully consumed
 				if (order.qty == 0) level_it.queue.pop_front();
-
-				// Remove price level if empty
-				if (level_it.queue.empty()) order_book.asks.erase(best_ask_it);
 			}
+			// Remove price level if empty
+			if (level_it.queue.empty()) order_book.bids.erase(best_ask_it);
 		}
 
 		return trades;
@@ -63,8 +63,8 @@ public:
 		vector<Trade> trades;
 		trades.reserve(10);
 
-		while (qty > 0 && !order_book.bids.empty()) {
-			auto best_bid_it = order_book.bids.begin();
+		while (qty > 0 && !order_book.asks.empty()) {
+			auto best_bid_it = order_book.asks.begin();
 			auto& level_it = best_bid_it->second;
 
 			while (qty > 0 && !level_it.queue.empty()) {
@@ -80,12 +80,12 @@ public:
 					});
 
 				order.qty -= trade_qty;
+				level_it.total_Qty -= trade_qty;
 				qty -= trade_qty;
 
 				if (order.qty == 0) level_it.queue.pop_front();
-
-				if (level_it.queue.empty()) order_book.bids.erase(best_bid_it);
 			}
+			if (level_it.queue.empty()) order_book.asks.erase(best_bid_it);
 		}
 
 		return trades;
@@ -109,6 +109,15 @@ public:
 	void reprice_order(OrderId orderId, Price newPrice) {
 		order_book.reprice_order(orderId, newPrice);
 	}
+
+	Qty get_asks_total_qty() {
+		return order_book.get_asks_total_qty();
+	}
+
+	Qty get_bids_total_qty() {
+		return order_book.get_bids_total_qty();
+	}
+
 	///  --------------------------
 
 private:
